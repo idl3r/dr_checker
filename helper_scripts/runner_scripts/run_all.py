@@ -11,7 +11,7 @@ def setup_args():
                         help='Destination directory where all the generated bitcode files should be stored.')
 
     parser.add_argument('-a', action='store', dest='chipset_num',
-                        help='Chipset number. Valid chipset numbers are: 1(mediatek)|2(qualcomm)|3(huawei)|4(samsung)',
+                        help='Chipset number. Valid chipset numbers are: 1(mediatek)|2(qualcomm)|3(huawei)|4(samsung)|5(generic)',
                         type=int)
     parser.add_argument('-m', action='store', dest='makeout',
                         help='Path to the makeout.txt file.')
@@ -71,6 +71,7 @@ def main():
     utils_dir = os.path.join(utils_dir, "../llvm_analysis")
     ana_helpers = os.path.join(utils_dir, "AnalysisHelpers")
     passes_dir = os.path.join(utils_dir, "MainAnalysisPasses/build_dir")
+
     # check for correct usage.
     if parsed_args.llvm_bc_out is None:
         usage()

@@ -27,13 +27,14 @@ class DriverLinker(Component):
             return "Provided LLVM Bitcode directory:" + str(self.llvm_bc_out) + " does not exist."
         if not os.path.exists(self.dr_link_bin) or not os.path.isfile(self.dr_link_bin):
             return "Provided dr link bin path does not exist:" + str(self.dr_link_bin)
-        if self.chipset_numer is None or self.chipset_numer < 1 or self.chipset_numer > 4:
-            return "Invalid chipset number. Valid chipset numbers are: 1(mediatek)|2(qualcomm)|3(huawei)|4(samsung)"
+        if self.chipset_numer is None or self.chipset_numer < 1 or self.chipset_numer > 5:
+            return "Invalid chipset number. Valid chipset numbers are: 1(mediatek)|2(qualcomm)|3(huawei)|4(samsung)|5(generic)"
         return None
 
     def perform(self):
         log_info("Running dr_linker. This might take time. Please wait.")
         cmd_to_run = self.dr_link_bin + " " + self.llvm_bc_out + " " + str(self.chipset_numer)
+        print "Command: ", cmd_to_run
         returncode = os.system(cmd_to_run)
         '''p = subprocess.Popen(self.dr_link_bin + " " + self.llvm_bc_out + " " + str(self.chipset_numer), stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                              shell=True)

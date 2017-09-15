@@ -131,6 +131,7 @@ INT_STS kernel_sts[] {
         {"struct.media_file_operations", 1, READ_HDR},
         {"struct.media_file_operations", 2, WRITE_HDR},
         {"struct.media_file_operations", 4, IOCTL_HDR},
+        {"struct.proto_ops", 9, IOCTL_HDR},
         {"END", 0, END_HDR}
 };
 

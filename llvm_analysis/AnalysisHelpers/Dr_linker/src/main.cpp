@@ -74,7 +74,8 @@ public:
 // folders
 // generic folders
 static const char *generic_folders[] = {"net/llc",
-                                       "net/netfilter"};
+                                       "net/netfilter",
+                                       "net/bluetooth"};
 
 // mediatek folders
 static const char *mediatek_driver_folder[] = {"drivers/misc/mediatek",
@@ -1470,6 +1471,12 @@ int main(int argc, char *argv[]) {
 
     for(i=0; i<all_interesting_files.size(); i++) {
         std::string curr_bc_file = all_interesting_files[i];
+
+        /* Skip filenames containing "llvm_link_final" */
+        if (curr_bc_file.find("/llvm_link_final/") != std::string::npos) {
+            continue;
+        }
+
         ErrorOr<std::unique_ptr<MemoryBuffer>> fileOrErr = MemoryBuffer::getFileOrSTDIN(curr_bc_file);
         const char *fileBuf = fileOrErr.get()->getMemBufferRef().getBufferStart();
         if(fileBuf[0] != 'B' || fileBuf[1] != 'C') {

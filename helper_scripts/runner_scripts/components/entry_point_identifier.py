@@ -103,10 +103,16 @@ def _generate_entry_points(entry_point_bin, llvm_bin_out, out_analysis_script, e
             log_info("EntryPointIdentifier Processing:" + curr_fi)
             entry_point_out = curr_fi + '.all_entries'
             if os.path.exists(entry_point_file):
-                os.system(entry_point_bin + ' ' + curr_fi + ' ' + entry_point_out + ' ' +
-                          entry_point_file + ' > /dev/null 2>&1')
+                # os.system(entry_point_bin + ' ' + curr_fi + ' ' + entry_point_out + ' ' +
+                #           entry_point_file + ' > /dev/null 2>&1')
+                cmd = entry_point_bin + ' ' + curr_fi + ' ' + entry_point_out + ' ' + entry_point_file
+                print(cmd)
+                os.system(cmd)
             else:
-                os.system(entry_point_bin + ' ' + curr_fi + ' ' + entry_point_out + ' > /dev/null 2>&1')
+                # os.system(entry_point_bin + ' ' + curr_fi + ' ' + entry_point_out + ' > /dev/null 2>&1')
+                cmd = entry_point_bin + ' ' + curr_fi + ' ' + entry_point_out
+                print(cmd)
+                os.system(cmd)
             assert(os.path.exists(entry_point_out))
             _process_entry_out(entry_point_out, curr_fi, out_analysis_funcs, out_analysis_cache)
     fp = open(out_analysis_script, "w")

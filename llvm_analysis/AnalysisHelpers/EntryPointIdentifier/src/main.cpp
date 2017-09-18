@@ -35,6 +35,9 @@ using namespace llvm;
 #define DEVATTR_STORE "DEVSTORE"
 #define V4L2_IOCTL_FUNC "V4IOCTL"
 #define END_HDR "ENDEND"
+#define SET_SOCKOPT_HDR "SETSOCKOPT"
+
+FILE *g_dbgOutputFile;
 
 typedef struct {
     std::string st_name;
@@ -132,6 +135,7 @@ INT_STS kernel_sts[] {
         {"struct.media_file_operations", 2, WRITE_HDR},
         {"struct.media_file_operations", 4, IOCTL_HDR},
         {"struct.proto_ops", 9, IOCTL_HDR},
+        {"struct.proto_ops", 13, SET_SOCKOPT_HDR},
         {"END", 0, END_HDR}
 };
 
@@ -285,6 +289,28 @@ void process_v4l2_file_ops_st(GlobalVariable *currGlobal, FILE *outputFile) {
     }
 }
 
+void process_proto_ops_st(GlobalVariable *currGlobal, FILE *outputFile) {
+    if (currGlobal->hasInitializer()) {
+        // get the initializer.
+        Constant *targetConstant = currGlobal->getInitializer();
+        ConstantStruct *actualStType = dyn_cast<ConstantStruct>(targetConstant);
+
+        // ioctl: 9
+        Value *currFieldVal = actualStType->getOperand(9);
+        Function *targetFunction = dyn_cast<Function>(currFieldVal);
+        if(targetFunction != nullptr && !targetFunction->isDeclaration()) {
+            fprintf(outputFile, "%s:%s\n", IOCTL_HDR, targetFunction->getName().str().c_str());
+        }
+
+        // setsockopt: 13
+        currFieldVal = actualStType->getOperand(13);
+        targetFunction = dyn_cast<Function>(currFieldVal);
+        if(targetFunction != nullptr && !targetFunction->isDeclaration()) {
+            fprintf(outputFile, "%s:%s\n", SET_SOCKOPT_HDR, targetFunction->getName().str().c_str());
+        }
+    }
+}
+
 char** str_split(char* a_str, const char a_delim)
 {
     char** result    = 0;
@@ -384,6 +410,7 @@ void process_global(GlobalVariable *currGlobal, FILE *outputFile, std::vector<st
     std::string snd_pcm_st("struct.snd_pcm_ops");
     std::string v4l2_ioctl_st("struct.v4l2_ioctl_ops");
     std::string v4l2_file_ops_st("struct.v4l2_file_operations");
+    std::string proto_ops_st("struct.proto_ops");
 
 
     Type *targetType = currGlobal->getType();
@@ -397,6 +424,9 @@ void process_global(GlobalVariable *currGlobal, FILE *outputFile, std::vector<st
         if(process_struct_in_custom_entry_files(currGlobal, outputFile, allentries)) {
             return;
         }
+
+        fprintf(g_dbgOutputFile, "%s, %s\n", currGlobal->getName().str().c_str(), containedType->getStructName().str().c_str());
+
         if (containedType->getStructName() == file_op_st) {
             process_file_operations_st(currGlobal, outputFile);
         } else if(containedType->getStructName() == dev_attr_st || containedType->getStructName() == dri_attr_st) {
@@ -409,7 +439,10 @@ void process_global(GlobalVariable *currGlobal, FILE *outputFile, std::vector<st
             process_v4l2_file_ops_st(currGlobal, outputFile);
         } else if(containedType->getStructName() == v4l2_ioctl_st) {
             process_v4l2_ioctl_st(currGlobal, outputFile);
-        } else {
+        } else if(containedType->getStructName() == proto_ops_st) {
+            process_proto_ops_st(currGlobal, outputFile);
+        }
+        else {
             unsigned long i=0;
             while(kernel_sts[i].method_lab != END_HDR) {
                 if(kernel_sts[i].st_name == containedType->getStructName()) {
@@ -469,10 +502,18 @@ int main(int argc, char *argv[]) {
         }
     }
 
-
-
     FILE *outputFile = fopen(output_txt_file, "w");
     assert(outputFile != nullptr);
+
+    /* Debug output */
+    char dbgFileName[1024];
+    snprintf(dbgFileName, sizeof(dbgFileName), "%s_dbg", output_txt_file);
+    g_dbgOutputFile = fopen(dbgFileName, "w");
+    // assert(g_dbgOutputFile != nullptr);
+    if (g_dbgOutputFile == nullptr) {
+        close(outputFile);
+        exit(2);
+    }
 
     LLVMContext context;
     ErrorOr<std::unique_ptr<MemoryBuffer>> fileOrErr = MemoryBuffer::getFileOrSTDIN(src_llvm_file);
@@ -500,4 +541,5 @@ int main(int argc, char *argv[]) {
         }
     }*/
     fclose(outputFile);
+    fclose(g_dbgOutputFile);
 }

@@ -7,17 +7,17 @@
 
 namespace DRCHECKER {
 
-/*#define DEBUG_GET_ELEMENT_PTR
-#define DEBUG_ALLOCA_INSTR
-#define DEBUG_CAST_INSTR
-#define DEBUG_BINARY_INSTR
-#define DEBUG_PHI_INSTR
-#define DEBUG_LOAD_INSTR
-#define DEBUG_STORE_INSTR
-#define DEBUG_BB_VISIT*/
-//#define DEBUG_CALL_INSTR
-//#define STRICT_CAST
-//#define DEBUG_RET_INSTR
+// #define DEBUG_GET_ELEMENT_PTR
+// #define DEBUG_ALLOCA_INSTR
+// #define DEBUG_CAST_INSTR
+// #define DEBUG_BINARY_INSTR
+// #define DEBUG_PHI_INSTR
+// #define DEBUG_LOAD_INSTR
+// #define DEBUG_STORE_INSTR
+// #define DEBUG_BB_VISIT
+// #define DEBUG_CALL_INSTR
+// #define STRICT_CAST
+// #define DEBUG_RET_INSTR
 
     std::set<PointerPointsTo*>* AliasAnalysisVisitor::getPointsToObjects(Value *srcPointer) {
         // Get points to objects set of the srcPointer at the entry of the instruction

@@ -8,7 +8,7 @@
 namespace DRCHECKER {
 
 //#define DEBUG_GLOBAL_ANALYSIS
-//#define DEBUG_CALL_INSTR
+#define DEBUG_CALL_INSTR
 // #define DONOT_CARE_COMPLETION
 #define MAX_CALLSITE_DEPTH 5
 #define MAX_FUNC_PTR 5

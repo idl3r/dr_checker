@@ -22,7 +22,11 @@
 #include <unistd.h>
 #include <dirent.h>
 
+<<<<<<< HEAD
 #define SIZEOF_ARRAY(a)    (sizeof(a) / sizeof(a[0]))
+=======
+#define SIZEOF_ARRAY(a) (sizeof(a) / sizeof(a[0]))
+>>>>>>> major_refactoring
 
 using namespace std;
 using namespace llvm;
@@ -1347,10 +1351,13 @@ int is_interesting_folder(char *curr_folder, unsigned long arch_no) {
         case 4:
             inter_folders = samsung_driver_folders;
             array_size = SIZEOF_ARRAY(samsung_driver_folders);
+<<<<<<< HEAD
             break;
         case 5:
             inter_folders = generic_folders;
             array_size = SIZEOF_ARRAY(generic_folders);
+=======
+>>>>>>> major_refactoring
             break;
         default:
             std::cerr << "Invalid arch number, Valid arch numbers are: 1(mediatek)|2(qualcomm)|3(huawei)|4(samsung)|5(generic)\n";
